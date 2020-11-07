@@ -1,0 +1,6 @@
+pandas==1.0.5
+pytest
+psycopg2-binary
+pylint
+pandas_read_xml
+python-json-logger
