@@ -1,0 +1,9 @@
+.idea/
+.terraform
+.DS_Store
+../venv/*
+*.tool-versions
+*.json.tpl
+*.execute.sh
+*.zipFiles
+*__pycache__*
