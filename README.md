@@ -1,0 +1,2 @@
+# movie_performance_report
+Generate report in GRAFANA hosted in DOCKER on top performing movies by their budget to revenue ratio also Dashboard showing genres on those top 1000 movies that hosted in POSTGRES DB in Docker and through the process of calculation and processing public domain movies metadata and IMDB WIKI Data using Python3 and by PANDAS module that will run in Docker where the LOGS can be seen in LOKI from Grafana dashboard. Top performing 1000 movies that loaded in POSTGRES can be queried from GRAFANA using POSTGRES datasource.
