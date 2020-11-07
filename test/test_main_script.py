@@ -6,7 +6,6 @@ import unittest
 import pandas_read_xml as pdx
 import pandas as pd
 from main import *
-import doc
 
 class TestmMainScript(unittest.TestCase):
 
