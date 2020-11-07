@@ -24,7 +24,7 @@ def main() -> bool:
     This function is the starting point that calls other functions
             that does filter adn do other jobs
         Parameters:
-            a (int): A decimal integer
+            None
 
         Returns:
             value (bool): True or False
