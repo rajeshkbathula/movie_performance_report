@@ -1,24 +1,27 @@
-import os,unittest
-from builtins import classmethod, open
+"""
+unittest framework to test main script functions
+"""
+
+import unittest
 import pandas_read_xml as pdx
-from main import *
 import pandas as pd
-
-
-current_directory = os.getcwd()
-
+from main import *
+import doc
 
 class TestmMainScript(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        THIS_DIR = os.path.dirname(os.path.abspath(__file__))
-        raw_movies_metadata_csv_path = os.path.join(THIS_DIR, './resources/raw_movies_metadata.csv')
+        thisdir = os.path.dirname(os.path.abspath(__file__))
+        raw_movies_metadata_csv_path = os.path.join(thisdir, './resources/raw_movies_metadata.csv')
         cls.raw_movies_metadata_csv_df = pd.read_csv(raw_movies_metadata_csv_path)
-        raw_wiki_abstract_xml_path = os.path.join(THIS_DIR, './resources/raw_wiki_abstract.xml')
+        raw_wiki_abstract_xml_path = os.path.join(thisdir, './resources/raw_wiki_abstract.xml')
         cls.raw_wiki_abstract_df = pdx.read_xml(raw_wiki_abstract_xml_path, ['feed', 'doc'])
 
     def test_main_import(self):
+        '''
+        This function will test main script import work or no
+        '''
         expected = True
         result = main()
         self.assertEqual(expected,result,"function from main import failing!")
@@ -31,3 +34,4 @@ class TestmMainScript(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+    
