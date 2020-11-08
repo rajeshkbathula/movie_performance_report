@@ -7,3 +7,5 @@
 *.execute.sh
 *.zipFiles
 *__pycache__*
+**/*.gz
+**/enwiki-latest-abstract.xml
