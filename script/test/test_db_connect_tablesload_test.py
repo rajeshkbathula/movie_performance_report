@@ -24,7 +24,7 @@ class TestmMainScript(unittest.TestCase):
         except Exception as e:
             result = None
         expected = 'Engine(postgresql+psycopg2://test_user:***@localhost/test_db)'
-        self.assertEqual(expected, result, "Pastgres DB function failed!")
+        self.assertEqual(expected, str(result), "Pastgres DB function failed!")
 
     def test_postgres_feed(self):
         '''

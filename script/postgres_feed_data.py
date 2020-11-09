@@ -3,7 +3,7 @@ import pandas as pd
 from sqlalchemy import create_engine
 from config import *
 
-def postgres_connect(user='db_user',passwd='db_user',db='movie_database'):
+def postgres_connect(user='db_admin',passwd='db_admin',db='movie_database'):
     """
     postgres connection using psycopg2 module
     :param user: str :usename

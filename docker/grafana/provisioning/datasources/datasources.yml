@@ -11,11 +11,11 @@ datasources:
     type: postgres
     url: postgres:5432
     database: movie_database
-    user: grafana
+    user: db_admin
     basicAuth: false
     jsonData:
        sslmode: disable
     secureJsonData:
-       password: "grafana"
+       password: "db_admin"
     version: 1
     editable: true
