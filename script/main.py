@@ -209,4 +209,3 @@ if __name__ == '__main__':
     top = 1000
     min_budget_limit = 1000
     main('./data/enwiki-latest-abstract.xml.gz','./data/movies_metadata.csv.zip')
-    
