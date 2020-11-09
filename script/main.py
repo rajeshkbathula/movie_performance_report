@@ -24,7 +24,7 @@ logger.addHandler(handler)
 logger.propagate=False
 logger.setLevel(logging.INFO)
 
-def filter_profit_movies(df,budget_limit_above = None):
+def filter_profit_movies(df,budget_limit_above=None):
     """
     this function will return pandas dataframe after filtering input dataframe
     revenue greater than budget and adding filter to avoid below 0 budget movies
@@ -46,7 +46,7 @@ def extract_year_from_release_date(df):
     df['year'] = pd.DatetimeIndex(df['release_date']).year
     return df
 
-def calc_ratio_from_budget_and_revenue_filter_top_once(df,num = None):
+def calc_ratio_from_budget_and_revenue_filter_top_once(df,num=None):
     """
     this function will return pandas dataframe by taking dataframe as input and calculating ration
     budget/revenue on those columns and adding ratio column to df

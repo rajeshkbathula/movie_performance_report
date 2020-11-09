@@ -3,10 +3,7 @@ unittest framework to test main script functions
 """
 
 import unittest
-import pandas as pd
-from pandas.testing  import assert_frame_equal
 from main import *
-from schema_config import *
 
 class TestmMainScript(unittest.TestCase):
 
@@ -19,15 +16,6 @@ class TestmMainScript(unittest.TestCase):
         cls.wiki_df = pd.read_csv(wiki_csv_path,delimiter="§",engine='python')
         movies_metadata_csv_path = os.path.join(cls.thisdir, './resources/movie_csv_df.csv')
         cls.movies_metadata_df = pd.read_csv(movies_metadata_csv_path, delimiter="§", engine='python')
-
-
-    def test_main_import(self):
-        '''
-        This function will test main script import work or no
-        '''
-        expected = None
-        result = main(self.raw_wiki_abstract_xml_path,self.raw_movies_metadata_csv_path)
-        self.assertEqual(result,expected,"function from main import failing!")
 
     def test_filter_bad_records(self):
         '''
@@ -69,9 +57,8 @@ class TestmMainScript(unittest.TestCase):
         '''
         This function will test xml parse into dataframe
         '''
-        budget_limit_above = 2
         top = 2
-        df = filter_profit_movies(self.movies_metadata_df, budget_limit_above)
+        df = filter_profit_movies(self.movies_metadata_df,2)
         result = extract_wiki_xml_into_pandas_df(self.raw_wiki_abstract_xml_path,df,top)
         expected = os.path.join(self.thisdir, './resources/raw_wiki_abstract_work.xml')
         self.assertEqual(result,expected,"wiki xml parse extraction function failed!")
