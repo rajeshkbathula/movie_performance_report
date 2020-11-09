@@ -9,3 +9,7 @@
 *__pycache__*
 **/*.gz
 **/enwiki-latest-abstract.xml
+**/movies_metadata.csv.zip
+**/*_work.xml
+**/*.csv.work
+**/movies_metadata.csv
