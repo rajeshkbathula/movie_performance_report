@@ -14,3 +14,4 @@
 **/*.csv.work
 **/movies_metadata.csv
 **/*.pytest_cache
+**/movies_metadata_final.csv

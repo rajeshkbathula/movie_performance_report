@@ -1,0 +1,34 @@
+version: "3"
+services:
+  grafana:
+    build:
+      context: ./grafana
+    container_name: grafana
+    ports:
+      - 9000:3000
+
+  loki:
+   build: ./loki
+   container_name: loki
+   entrypoint:
+     - /usr/bin/loki
+     - -config.file=/etc/config/loki.yaml
+   ports:
+     - 3100:3100
+   expose:
+     - 3100
+
+  postgres:
+   build: ./postgres
+   environment:
+     - "POSTGRES_HOST_AUTH_METHOD=trust"
+   ports:
+     - 5432:5432
+
+  pgadmin:
+   image: dpage/pgadmin4
+   environment:
+     PGADMIN_DEFAULT_EMAIL: this.test@gmail.com
+     PGADMIN_DEFAULT_PASSWORD: pgadmin
+   ports:
+     - "8889:80"

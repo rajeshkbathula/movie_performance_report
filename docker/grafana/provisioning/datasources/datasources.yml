@@ -1,0 +1,21 @@
+apiVersion: 1
+
+datasources:
+  - name: loki
+    type: loki
+    url: loki:3100
+    access: proxy
+    isDefault: false
+
+  - name: postgres
+    type: postgres
+    url: postgres:5432
+    database: movie_database
+    user: db_admin
+    basicAuth: false
+    jsonData:
+       sslmode: disable
+    secureJsonData:
+       password: "db_admin"
+    version: 1
+    editable: true
