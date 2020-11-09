@@ -3,26 +3,13 @@ Python script that reads opensource movies metadata filter
 required fileds by mapping it to IMDB wiki file
 """
 import gzip
-import logging
-import sys, time
-import os, re
-from pythonjsonlogger import jsonlogger
+import re
 import pandas as pd
-from schema_config import *
 import csv
 from zipfile import ZipFile
 import datetime
-
-
-logger_name = os.environ.get('logger_name', 'local')
-logger = logging.getLogger(logger_name)
-handler = logging.StreamHandler(stream=sys.stdout)
-formatter = jsonlogger.JsonFormatter(
-    '%(levelname)s - %(asctime)s  - %(message)s - %(name)s - %(lineno)d - %(filename)s ')
-handler.setFormatter(formatter)
-logger.addHandler(handler)
-logger.propagate=False
-logger.setLevel(logging.INFO)
+from config import *
+from postgres_feed_data import *
 
 def filter_profit_movies(df,budget_limit_above=None):
     """
@@ -182,6 +169,12 @@ def extract_metadata_csv_into_pandas_df(csv_files_path : str):
         logger.error(f"csv parsing into dataframe failed with Ecxception {e} !")
         quit()
 
+def time_now():
+    '''
+        This function will retun time now in HHMMSS format
+        '''
+    return int(datetime.datetime.now().strftime('%H%M%S'))
+
 def main(xml_file_path,csv_file_path):
     '''
     This function is the starting point that calls other functions
@@ -192,19 +185,28 @@ def main(xml_file_path,csv_file_path):
         Returns:
             value (bool): True or False
     '''
-    start_time = int(datetime.datetime.now().strftime('%H%M%S'))
+    start_time = time_now
     logger.info("main function called!")
     filtered_csv_records_file = filter_bad_records(csv_file_path)
     movie_metedata_df = extract_metadata_csv_into_pandas_df(filtered_csv_records_file)
     profit_movies_df = filter_profit_movies(movie_metedata_df)
     top_ratio_movies = calc_ratio_from_budget_and_revenue_filter_top_once(profit_movies_df)
     movies_with_year_df = extract_year_from_release_date(top_ratio_movies)
+    pandas_to_postgres_table(postgres_table_name_movies,movies_with_year_df)
+    movie_time = time_now
+    logger.info(f"wiki CSV load to postgres done  {round(float((movie_time - start_time)/60), 2)} Mins!")
+
     xml_file_decompressed_path = unzip_wiki_file(xml_file_path)
     wiki_list_filtered_to_match_movies = extract_wiki_xml_into_pandas_df(xml_file_decompressed_path,movies_with_year_df)
-    end_time = int(datetime.datetime.now().strftime('%H%M%S'))
-    logger.info(f"main function Ended took {round(float((end_time-start_time)/60),2)} Mins!")
+    wiki_final_df = pd.DataFrame(wiki_list_filtered_to_match_movies)
+    postgres_table_name_wiki(postgres_table_name_wiki,wiki_final_df)
+    wiki_time = time_now
+    logger.info(f"wiki CSV load to postgres done  {round(float((wiki_time - movie_time) / 60), 2)} Mins!")
+    end_time = time_now
+    logger.info(f"main function Ended took {round(float((end_time - start_time)/60),2)} Mins!")
 
 if __name__ == '__main__':
-    top = 1
+    top = 2
     min_budget_limit = 1000
     main('./data/enwiki-latest-abstract.xml.gz','./data/movies_metadata.csv.zip')
+    
