@@ -4,7 +4,6 @@ unittest framework to test main script functions
 
 import unittest
 from main import *
-import pandas as pd
 
 class TestmMainScript(unittest.TestCase):
 
