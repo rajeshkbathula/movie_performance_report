@@ -102,6 +102,7 @@ def extract_wiki_xml_into_pandas_df(xml_file_path, movie_df,num = None):
     wiki_filter_list = []
     logger.info(f"XML wiki extract for columns in progress!")
     cnt = 0
+    top_movie_titles = tuple(movie_df.title.tolist())
     with open(xml_file_path, "r") as file,  open(xml_filter_file_path,'w') as wiki_file:
         writer = csv.writer(wiki_file)
         writer.writerow((item for item in wiki_df_columns))
@@ -114,13 +115,7 @@ def extract_wiki_xml_into_pandas_df(xml_file_path, movie_df,num = None):
                     title = re.findall(r'<title>Wikipedia: (.*?)</title>', line)[0]
                     link = re.findall(r'<url>(.*?)</url>', next(file))[0]
                     abstract = re.findall(r'<abstract>(.*?)</abstract>', next(file))
-                    top_movie_titles =  tuple(movie_df.title.tolist())
                     if title and title in top_movie_titles :
-                        # wiki_filter_list.append((title, link, abstract))
-                        # logger.info(f"XML wiki extract for columns in progress found [{len(wiki_filter_list)}] out of [{num}]")
-                        # if len(wiki_filter_list) == num:
-                        #     logger.info(f"Matched with top : [{num}]  movies list rowcount : [{wiki_filter_list}]")
-                        #     return wiki_filter_list
                         cnt += 1
                         writer.writerow((title,link,abstract))
                         logger.info(f"Running Matched with top : [{cnt}] from movies : [{num}]")

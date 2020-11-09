@@ -13,3 +13,4 @@
 **/*_work.xml
 **/*.csv.work
 **/movies_metadata.csv
+**/*.pytest_cache
