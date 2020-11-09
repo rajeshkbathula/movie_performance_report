@@ -207,11 +207,9 @@ def main(xml_file_path,csv_file_path):
     xml_file_decompressed_path = unzip_wiki_file(xml_file_path)
     wiki_list_filtered_to_match_movies = extract_wiki_xml_into_pandas_df(xml_file_decompressed_path,movies_with_year_df)
     end_time = int(datetime.datetime.now().strftime('%H%M%S'))
-    logger.info(f"main function Ended took {round(float((end_time)-int(start_time)/60),2)} Mins!")
+    logger.info(f"main function Ended took {round(float((end_time-start_time)/60),2)} Mins!")
 
 if __name__ == '__main__':
     top = 1
     min_budget_limit = 1000
     main('./data/enwiki-latest-abstract.xml.gz','./data/movies_metadata.csv.zip')
-
-#"2020-11-08 21:54:06,994" - "2020-11-08 21:54:18,022"
