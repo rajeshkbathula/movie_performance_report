@@ -4,11 +4,9 @@ required fileds by mapping it to IMDB wiki file
 """
 import gzip
 import re
-import pandas as pd
 import csv
 from zipfile import ZipFile
 import datetime
-from config import *
 from postgres_feed_data import *
 
 def filter_profit_movies(df,budget_limit_above=None):
@@ -43,8 +41,7 @@ def calc_ratio_from_budget_and_revenue_filter_top_once(df,num=None):
     if not num:
         num = top
     df = df.fillna(0)
-    # df['ratio'] = df['budget'] / df['revenue']
-    df['ratio'] = df['revenue'] / df['budget']
+    df['ratio'] = df['budget'] / df['revenue']
     df.sort_values(by=['ratio'], inplace=True, ascending=False)
     df = df.head(num).reset_index(drop=True)
     return df
@@ -194,18 +191,21 @@ def main(xml_file_path,csv_file_path):
     movies_with_year_df = extract_year_from_release_date(top_ratio_movies)
     pandas_to_postgres_table(postgres_table_name_movies,movies_with_year_df)
     movie_time = time_now()
-    logger.info(f"wiki CSV load to postgres done  {round(float((movie_time - start_time)/60), 2)} Mins!")
-
+    logger.info(f"Movie Metadata CSV load to postgres done  {round(float((movie_time - start_time)/60), 2)} Mins!")
     xml_file_decompressed_path = unzip_wiki_file(xml_file_path)
     wiki_list_filtered_to_match_movies = extract_wiki_xml_into_pandas_df(xml_file_decompressed_path,movies_with_year_df)
-    wiki_final_df = pd.DataFrame(wiki_list_filtered_to_match_movies)
-    postgres_table_name_wiki(postgres_table_name_wiki,wiki_final_df)
+    wiki_final_df = pd.read_csv(wiki_list_filtered_to_match_movies)
+    pandas_to_postgres_table(postgres_table_name_wiki,wiki_final_df)
+    # pandas_to_postgres_table(table_name_raw_movies_meta, movie_metedata_df) #if raw database required switch this on
+    logger.info(f"Movie Metadata CSV load to postgres done  {round(float((movie_time - start_time)/60), 2)} Mins!")
     wiki_time = time_now()
-    logger.info(f"wiki CSV load to postgres done  {round(float((wiki_time - movie_time) / 60), 2)} Mins!")
+    logger.info(f"wiki links load to postgres done  {round(float((wiki_time - movie_time) / 60), 2)} Mins!")
     end_time = time_now()
     logger.info(f"main function Ended took {round(float((end_time - start_time)/60),2)} Mins!")
+    logger.info(f"Grafana link for final table [ {final_table_query_link} ] !")
+
 
 if __name__ == '__main__':
-    top = 1000
-    min_budget_limit = 1000
+    top = 100
+    min_budget_limit = 100
     main('./data/enwiki-latest-abstract.xml.gz','./data/movies_metadata.csv.zip')

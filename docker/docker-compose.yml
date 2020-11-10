@@ -17,6 +17,8 @@ services:
      - 3100:3100
    expose:
      - 3100
+     - 993
+     - 143
 
   postgres:
    build: ./postgres

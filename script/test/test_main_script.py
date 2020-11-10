@@ -2,13 +2,15 @@
 unittest framework to test main script functions
 """
 
-import unittest
+import unittest,os
 from main import *
+
 
 class TestmMainScript(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
+        logger.info(f"Running test cases Started!")
         cls.thisdir = os.path.dirname(os.path.abspath(__file__))
         cls.raw_movies_metadata_csv_path = os.path.join(cls.thisdir, './resources/raw_movies_metadata.csv.zip')
         cls.raw_wiki_abstract_xml_path = os.path.join(cls.thisdir, './resources/raw_wiki_abstract.xml')
@@ -41,7 +43,7 @@ class TestmMainScript(unittest.TestCase):
         for index, value in df['budget'].items():
             self.assertGreater(value,0,"budget filter greater than 0 failed!")
         df = calc_ratio_from_budget_and_revenue_filter_top_once(df,3)
-        expected_ratio = 15.454710875
+        expected_ratio = 1.1927757142857143
         result= df['revenue'][0]/ df['budget'][0]
         self.assertEqual(expected_ratio, result,"ratio not matching!")
 
@@ -93,7 +95,7 @@ class TestmMainScript(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        pass
+        logger.info(f"Done Testing!")
 
 
 if __name__ == '__main__':
