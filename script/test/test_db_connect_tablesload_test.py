@@ -1,7 +1,7 @@
 """
 unittest framework to test Postgres connection and data load
 """
-import unittest
+import unittest,os
 import uuid
 from main import *
 

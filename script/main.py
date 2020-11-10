@@ -4,50 +4,13 @@ required fileds by mapping it to IMDB wiki file
 """
 import gzip
 import re
-import pandas as pd
 import csv
 from zipfile import ZipFile
 import datetime
-from config import *
+import os
+import argparse
 from postgres_feed_data import *
-
-def filter_profit_movies(df,budget_limit_above=None):
-    """
-    this function will return pandas dataframe after filtering input dataframe
-    revenue greater than budget and adding filter to avoid below 0 budget movies
-    :param DataFrame
-    :return: DataFrame
-    """
-    if not budget_limit_above:
-        budget_limit_above = min_budget_limit
-    df['budget'] = df['budget'].apply(pd.to_numeric)
-    df =  df[(df['budget'] > budget_limit_above) & (df['revenue'] > df['budget'])]
-    return df
-
-def extract_year_from_release_date(df):
-    """
-    this function will return pandas dataframe
-    :param DataFrame
-    :return: DataFrame
-    """
-    df['year'] = pd.DatetimeIndex(df['release_date']).year
-    return df
-
-def calc_ratio_from_budget_and_revenue_filter_top_once(df,num=None):
-    """
-    this function will return pandas dataframe by taking dataframe as input and calculating ration
-    budget/revenue on those columns and adding ratio column to df
-    :param DataFrame : dataframe with movies data in it
-    :return: DataFrame : dataframe with ratio
-    """
-    if not num:
-        num = top
-    df = df.fillna(0)
-    # df['ratio'] = df['budget'] / df['revenue']
-    df['ratio'] = df['revenue'] / df['budget']
-    df.sort_values(by=['ratio'], inplace=True, ascending=False)
-    df = df.head(num).reset_index(drop=True)
-    return df
+from movie_filter_logic import *
 
 def unzip_wiki_file(source_filepath, block_size=65536):
     """
@@ -194,18 +157,25 @@ def main(xml_file_path,csv_file_path):
     movies_with_year_df = extract_year_from_release_date(top_ratio_movies)
     pandas_to_postgres_table(postgres_table_name_movies,movies_with_year_df)
     movie_time = time_now()
-    logger.info(f"wiki CSV load to postgres done  {round(float((movie_time - start_time)/60), 2)} Mins!")
-
+    logger.info(f"Movie Metadata CSV load to postgres done  {round(float((movie_time - start_time)/60), 2)} Mins!")
+    logger.info(f"Metadata Table Link <-[ {metadata_query_link} ]-> !")
     xml_file_decompressed_path = unzip_wiki_file(xml_file_path)
     wiki_list_filtered_to_match_movies = extract_wiki_xml_into_pandas_df(xml_file_decompressed_path,movies_with_year_df)
-    wiki_final_df = pd.DataFrame(wiki_list_filtered_to_match_movies)
-    postgres_table_name_wiki(postgres_table_name_wiki,wiki_final_df)
+    wiki_final_df = pd.read_csv(wiki_list_filtered_to_match_movies)
+    pandas_to_postgres_table(postgres_table_name_wiki,wiki_final_df)
+    postgres_view_with_final_results()
+    # pandas_to_postgres_table(table_name_raw_movies_meta, movie_metedata_df) #if raw database required switch this on
     wiki_time = time_now()
-    logger.info(f"wiki CSV load to postgres done  {round(float((wiki_time - movie_time) / 60), 2)} Mins!")
+    logger.info(f"wiki links load to postgres done  {round(float((wiki_time - movie_time) / 60), 2)} Mins!")
     end_time = time_now()
     logger.info(f"main function Ended took {round(float((end_time - start_time)/60),2)} Mins!")
+    logger.info(f"Metadata Table Link <-[ {metadata_query_link} ]-> !")
+    logger.info(f"wiki links Table Link  <-[ {wiki_table_query_link} ]->  !")
+    logger.info(f"Top {top} Table Link  <-[ {final_view_query_link} ]->  !")
+
 
 if __name__ == '__main__':
-    top = 1000
-    min_budget_limit = 1000
-    main('./data/enwiki-latest-abstract.xml.gz','./data/movies_metadata.csv.zip')
+    parser = argparse.ArgumentParser(description='Top Movies')
+    parser.add_argument('--input_location', required=False, default='./data')
+    args = vars(parser.parse_args())
+    main(f"{args['input_location']}/enwiki-latest-abstract.xml.gz",f"{args['input_location']}/movies_metadata.csv.zip")

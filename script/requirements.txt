@@ -1,0 +1,5 @@
+pandas
+pytest
+sqlalchemy
+python-logging-loki
+psycopg2-binary

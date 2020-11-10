@@ -24,11 +24,3 @@ services:
      - "POSTGRES_HOST_AUTH_METHOD=trust"
    ports:
      - 5432:5432
-
-  pgadmin:
-   image: dpage/pgadmin4
-   environment:
-     PGADMIN_DEFAULT_EMAIL: this.test@gmail.com
-     PGADMIN_DEFAULT_PASSWORD: pgadmin
-   ports:
-     - "8889:80"

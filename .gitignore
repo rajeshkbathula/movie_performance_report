@@ -1,11 +1,11 @@
 .idea/
 .terraform
 .DS_Store
-../venv/*
+**/.venv/*
 *.tool-versions
 *.json.tpl
 *.execute.sh
-*.zipFiles
+**/*.PythonFiles
 *__pycache__*
 **/*.gz
 **/enwiki-latest-abstract.xml
