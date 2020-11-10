@@ -1,6 +1,5 @@
 pandas
 pytest
-python-json-logger
 sqlalchemy
 python-logging-loki
 psycopg2-binary
