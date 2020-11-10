@@ -209,4 +209,4 @@ def main(xml_file_path,csv_file_path):
 if __name__ == '__main__':
     top = 100
     min_budget_limit = 100
-    main('./data/enwiki-latest-abstract.xml.gz','./data/movies_metadata.csv.zip')
+    main('/tmp/movies_data/enwiki-latest-abstract.xml.gz','/tmp/movies_data/movies_metadata.csv.zip')

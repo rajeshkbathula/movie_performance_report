@@ -5,7 +5,7 @@
 *.tool-versions
 *.json.tpl
 *.execute.sh
-*.zipFiles
+**/*.PythonFiles
 *__pycache__*
 **/*.gz
 **/enwiki-latest-abstract.xml

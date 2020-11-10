@@ -1,48 +1,34 @@
 RUN_TEST: test main
 RUN_IN_DOCKER: test-with-mysql main-with-mysql
-PYTHON?=
-
 
 WORK_DIR=$(shell pwd)
-PYTHON               ?=python # change here how you set bash profile your python like python3 or python
-PIP_VERSION             ?=PIP
-#TMP_CW_LOKI_SHIPPER         ?=/tmp/$(LOKI_SHIPPER)
+PYTHON       ?=python # change here how you set bash profile your python like python3 or python
+PIP_VERSION  ?=PIP
+MOUNT_VOLUME ?=/tmp/movies_data
+LOKI_URL     ?=http://localhost:9000/explore?orgId=1&left=%5B%22now-1h%22,%22now%22,%22loki%22,%7B%7D%5D
+
 
 local_test:
 	cd script && virtualenv ./.venv; \
-	source ./.venv/bin/activate; $(PIP_VERSION) install -r ./requirements.txt; \
+	source ./.venv/bin/activate;  $(PIP_VERSION) install -r ./requirements.txt; \
 	pytest ./test/test_main_script.py
 
-docker_build_and_run:
-#	rm -rf $(TMP_CW_LOKI_SHIPPER)
-#	cp -r ${WORK_DIR}/$(CW_LOKI_SHIPPER) $(TMP_CW_LOKI_SHIPPER)
-	cd $(TMP_CW_LOKI_SHIPPER) && virtualenv ./.venv; \
-	source ./.venv/bin/activate; $(PIP_VERSION) install -r ./requirements.txt; \
-	$(PIP_VERSION) install pytest; pytest ./test; $(PIP_VERSION) install -r ./requirements.txt -t ./; \
-	sh ./build
+docker_up:
+	cd ./docker && docker-compose up -d
 
-local_clean:
-	docker build ./ -t mysql-db
-	docker run --env="MYSQL_ROOT_PASSWORD=root_password" -p 3306:3306 -d mysql-db
-	sleep 20
+docker_down:
+	cd ${WORK_DIR}/docker && docker-compose down
 
-test:
-	.venv/bin/pytest tests/json_to_agrt_main_test.py -v
+docker_exec:
+#	mkdir -p ${WORK_DIR}/docker/loki/.PythonFiles
+	rm -rf ${WORK_DIR}/script/__pycache__ ${WORK_DIR}/script/.pytest_cache ${WORK_DIR}/script/.venv
+#	cp -r ${WORK_DIR}/script ${MOUNT_VOLUME}
+	cd ${WORK_DIR}/script && docker build ./ -t python_app
+	cd ${WORK_DIR}/script && docker run -v /tmp/movies_data:/tmp -u root -it python_app /bin/bash /run.sh
+	echo " <<<<---- 😃 Click this link ${LOKI_URL} to go to application logs and results links 😃 ---->>>>"
 
-main-with-mysql:
+clean:
 	.venv/bin/python ./main/json_format_push_to_mysql.py --db='presentation_db'
 
-main: test
+destroy: test
 	.venv/bin/python ./main/json_format_push_to_mysql.py
-
-wtest-with-mysql:
-	.venv\Scripts\pytest .\tests -v
-
-wtest:
-	.venv\Scripts\pytest .\tests\json_to_agrt_main_test.py -v
-
-wmain-with-mysql: wtest-with-mysql
-	.venv\Scripts\python .\main\json_format_push_to_mysql.py --db='presentation_db'
-
-wmain: wtest
-	.venv\Scripts\python .\main\json_format_push_to_mysql.py
