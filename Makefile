@@ -11,9 +11,9 @@ PIP_VERSION             ?=PIP
 local_test:
 	cd script && virtualenv ./.venv; \
 	source ./.venv/bin/activate; $(PIP_VERSION) install -r ./requirements.txt; \
-	PYTHON ./test/test_main_script.py
+	pytest ./test/test_main_script.py
 
-docker-build:
+docker_build_and_run:
 #	rm -rf $(TMP_CW_LOKI_SHIPPER)
 #	cp -r ${WORK_DIR}/$(CW_LOKI_SHIPPER) $(TMP_CW_LOKI_SHIPPER)
 	cd $(TMP_CW_LOKI_SHIPPER) && virtualenv ./.venv; \
@@ -21,7 +21,7 @@ docker-build:
 	$(PIP_VERSION) install pytest; pytest ./test; $(PIP_VERSION) install -r ./requirements.txt -t ./; \
 	sh ./build
 
-docker-build:
+local_clean:
 	docker build ./ -t mysql-db
 	docker run --env="MYSQL_ROOT_PASSWORD=root_password" -p 3306:3306 -d mysql-db
 	sleep 20

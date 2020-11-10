@@ -2,10 +2,20 @@
 unittest framework to test main script functions
 """
 
-import unittest,os
+import unittest,os,sys
 from main import *
+from pythonjsonlogger import jsonlogger
 
 
+logger_name = os.environ.get('logger_name', 'local')
+logger = logging.getLogger(logger_name)
+handler = logging.StreamHandler(stream=sys.stdout)
+formatter = jsonlogger.JsonFormatter(
+    '%(levelname)s - %(asctime)s  - %(message)s - %(name)s - %(lineno)d - %(filename)s ')
+handler.setFormatter(formatter)
+logger.addHandler(handler)
+logger.propagate=False
+logger.setLevel(logging.INFO)
 class TestmMainScript(unittest.TestCase):
 
     @classmethod

@@ -7,6 +7,7 @@ import re
 import csv
 from zipfile import ZipFile
 import datetime
+import os
 from postgres_feed_data import *
 
 def filter_profit_movies(df,budget_limit_above=None):
